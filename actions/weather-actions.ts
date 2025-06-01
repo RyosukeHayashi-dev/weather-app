@@ -156,6 +156,12 @@ function convertToWeatherRecord(weatherData: WeatherData, recordedAt?: Date): We
 export async function fetchWeatherData(): Promise<{ data: WeatherData[]; isUsingMockData: boolean }> {
   const API_KEY = process.env.OPENWEATHERMAP_API_KEY
 
+  // デバッグ用ログ（本番環境でも環境変数をチェック）
+  console.log("🔍 Environment Variables Check:")
+  console.log("OPENWEATHERMAP_API_KEY:", API_KEY ? "✅ Configured" : "❌ Missing")
+  console.log("SUPABASE_URL:", process.env.SUPABASE_URL ? "✅ Configured" : "❌ Missing")
+  console.log("SUPABASE_ANON_KEY:", process.env.SUPABASE_ANON_KEY ? "✅ Configured" : "❌ Missing")
+
   // APIキーが設定されていない場合はモックデータを使用
   if (!API_KEY || API_KEY.trim() === "") {
     console.warn("OpenWeatherMap API key is not configured. Using mock data.")
