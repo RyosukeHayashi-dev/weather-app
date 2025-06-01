@@ -86,106 +86,210 @@ export function ForecastView({ forecastData, onBack, isUsingMockData }: Forecast
         </header>
 
         {/* 5日間予報カード */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
-          {forecastData.map((day, index) => (
-            <>
+        <div className="mb-8 sm:mb-12">
+          {/* PC版（lg:以上）：元の構成 */}
+          <div className="hidden lg:grid lg:grid-cols-5 gap-8">
+            {forecastData.map((day, index) => (
               <Card 
                 key={index}
-                className="bg-gradient-to-br from-black/60 via-gray-900/40 to-black/60 backdrop-blur-lg border border-orange-400/30 text-white hover:scale-105 transition-all duration-300 cursor-pointer min-h-[300px] sm:min-h-[350px] md:min-h-[400px]"
+                className="bg-gradient-to-br from-black/60 via-gray-900/40 to-black/60 backdrop-blur-lg border border-orange-400/30 text-white hover:scale-105 transition-all duration-300 cursor-pointer min-h-[400px]"
                 onClick={() => setSelectedDay(selectedDay === index ? null : index)}
               >
-                <CardContent className="p-4 sm:p-6 md:p-8">
-                  <div className="text-center mb-4 sm:mb-6">
-                    <div className="text-lg sm:text-xl md:text-2xl font-bold text-orange-300 mb-1 sm:mb-2">{day.date}</div>
-                    <div className="text-base sm:text-lg text-gray-300">{day.dayOfWeek}</div>
+                <CardContent className="p-8">
+                  <div className="text-center mb-6">
+                    <div className="text-2xl font-bold text-orange-300 mb-2">{day.date}</div>
+                    <div className="text-lg text-gray-300">{day.dayOfWeek}</div>
                   </div>
 
-                  <div className="flex justify-center mb-4 sm:mb-6">
-                    <div className="h-14 w-14 sm:h-20 sm:w-20">
+                  <div className="flex justify-center mb-6">
+                    <div className="h-20 w-20">
                       {getWeatherIcon(day.icon)}
                     </div>
                   </div>
 
-                  <div className="text-center mb-4 sm:mb-6">
-                    <div className="text-base sm:text-lg text-gray-300 mb-1 sm:mb-3">{day.description}</div>
-                    <div className="flex items-center justify-center space-x-2 sm:space-x-3">
-                      <span className="text-2xl sm:text-3xl font-bold text-orange-300">{day.maxTemp}°</span>
+                  <div className="text-center mb-6">
+                    <div className="text-lg text-gray-300 mb-3">{day.description}</div>
+                    <div className="flex items-center justify-center space-x-3">
+                      <span className="text-3xl font-bold text-orange-300">{day.maxTemp}°</span>
                       <span className="text-gray-400">/</span>
-                      <span className="text-2xl sm:text-3xl font-bold text-blue-300">{day.minTemp}°</span>
+                      <span className="text-3xl font-bold text-blue-300">{day.minTemp}°</span>
                     </div>
                   </div>
 
-                  <div className="space-y-2 sm:space-y-4">
-                    <div className="flex items-center justify-between text-base sm:text-lg">
-                      <div className="flex items-center space-x-2 sm:space-x-3">
-                        <Droplets className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-lg">
+                      <div className="flex items-center space-x-3">
+                        <Droplets className="h-6 w-6 text-blue-400" />
                         <span>{day.humidity}%</span>
                       </div>
-                      <div className="flex items-center space-x-2 sm:space-x-3">
-                        <Wind className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                      <div className="flex items-center space-x-3">
+                        <Wind className="h-6 w-6 text-gray-400" />
                         <span>{day.windSpeed}m/s</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-center mt-4 sm:mt-6">
-                    <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-base sm:text-lg text-gray-400">
-                      {selectedDay === index ? <ChevronDown className="h-5 w-5 sm:h-6 sm:w-6" /> : <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6" />}
+                  <div className="text-center mt-6">
+                    <div className="flex items-center justify-center space-x-2 text-lg text-gray-400">
+                      {selectedDay === index ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
                       <span>詳細表示</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              {/* 詳細を開いた日だけ、その直後に詳細カードを挿入 */}
-              {selectedDay === index && (
-                <Card className="bg-gradient-to-br from-black/70 via-gray-900/50 to-black/70 backdrop-blur-xl border border-orange-400/40 text-white mb-6 sm:mb-8">
-                  <CardContent className="p-4 sm:p-8">
-                    <div className="flex flex-col sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-6">
-                      <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-orange-400" />
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center sm:text-left">
-                        {forecastData[selectedDay].date} ({forecastData[selectedDay].dayOfWeek}) の詳細予報
-                      </h2>
+            ))}
+          </div>
+
+          {/* スマホ版（lg未満）：新しい構成 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:hidden">
+            {forecastData.map((day, index) => (
+              <>
+                <Card 
+                  key={index}
+                  className="bg-gradient-to-br from-black/60 via-gray-900/40 to-black/60 backdrop-blur-lg border border-orange-400/30 text-white hover:scale-105 transition-all duration-300 cursor-pointer min-h-[300px] sm:min-h-[350px]"
+                  onClick={() => setSelectedDay(selectedDay === index ? null : index)}
+                >
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="text-center mb-4 sm:mb-6">
+                      <div className="text-lg sm:text-xl font-bold text-orange-300 mb-1 sm:mb-2">{day.date}</div>
+                      <div className="text-base sm:text-lg text-gray-300">{day.dayOfWeek}</div>
                     </div>
 
-                    {/* 3時間ごとの予報 */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
-                      {forecastData[selectedDay].hourlyForecasts.map((hourly, hourIndex) => (
-                        <div 
-                          key={hourIndex}
-                          className="bg-black/40 backdrop-blur-lg rounded-xl p-3 sm:p-6 text-center border border-gray-600/30 min-h-[120px] sm:min-h-[160px] md:min-h-[200px]"
-                        >
-                          <div className="text-base sm:text-lg font-bold text-orange-300 mb-2 sm:mb-4">{hourly.time}</div>
-                          
-                          <div className="flex justify-center mb-2 sm:mb-4">
-                            <div className="h-8 w-8 sm:h-12 sm:w-12">
-                              {getSmallWeatherIcon(hourly.icon)}
-                            </div>
-                          </div>
+                    <div className="flex justify-center mb-4 sm:mb-6">
+                      <div className="h-14 w-14 sm:h-20 sm:w-20">
+                        {getWeatherIcon(day.icon)}
+                      </div>
+                    </div>
 
-                          <div className="space-y-1 sm:space-y-3">
-                            <div className="text-lg sm:text-2xl font-bold text-white">{hourly.temp}°</div>
-                            <div className="text-xs sm:text-sm text-gray-300">{hourly.description}</div>
-                            
-                            <div className="space-y-1 sm:space-y-2">
-                              <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm">
-                                <Droplets className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400" />
-                                <span>{hourly.humidity}%</span>
-                              </div>
-                              <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm">
-                                <Wind className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-                                <span>{hourly.windSpeed}m/s</span>
-                              </div>
-                            </div>
-                          </div>
+                    <div className="text-center mb-4 sm:mb-6">
+                      <div className="text-base sm:text-lg text-gray-300 mb-1 sm:mb-3">{day.description}</div>
+                      <div className="flex items-center justify-center space-x-2 sm:space-x-3">
+                        <span className="text-2xl sm:text-3xl font-bold text-orange-300">{day.maxTemp}°</span>
+                        <span className="text-gray-400">/</span>
+                        <span className="text-2xl sm:text-3xl font-bold text-blue-300">{day.minTemp}°</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 sm:space-y-4">
+                      <div className="flex items-center justify-between text-base sm:text-lg">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <Droplets className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
+                          <span>{day.humidity}%</span>
                         </div>
-                      ))}
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <Wind className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                          <span>{day.windSpeed}m/s</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4 sm:mt-6">
+                      <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-base sm:text-lg text-gray-400">
+                        {selectedDay === index ? <ChevronDown className="h-5 w-5 sm:h-6 sm:w-6" /> : <ChevronUp className="h-5 w-5 sm:h-6 sm:w-6" />}
+                        <span>詳細表示</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-              )}
-            </>
-          ))}
+                {/* スマホ版のみ：詳細を開いた日だけ、その直後に詳細カードを挿入 */}
+                {selectedDay === index && (
+                  <Card className="bg-gradient-to-br from-black/70 via-gray-900/50 to-black/70 backdrop-blur-xl border border-orange-400/40 text-white mb-6 sm:mb-8 col-span-1 sm:col-span-2">
+                    <CardContent className="p-4 sm:p-8">
+                      <div className="flex flex-col sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-6">
+                        <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-orange-400" />
+                        <h2 className="text-xl sm:text-2xl font-bold text-white text-center sm:text-left">
+                          {forecastData[selectedDay].date} ({forecastData[selectedDay].dayOfWeek}) の詳細予報
+                        </h2>
+                      </div>
+
+                      {/* 3時間ごとの予報 */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        {forecastData[selectedDay].hourlyForecasts.map((hourly, hourIndex) => (
+                          <div 
+                            key={hourIndex}
+                            className="bg-black/40 backdrop-blur-lg rounded-xl p-3 sm:p-6 text-center border border-gray-600/30 min-h-[120px] sm:min-h-[160px]"
+                          >
+                            <div className="text-base sm:text-lg font-bold text-orange-300 mb-2 sm:mb-4">{hourly.time}</div>
+                            
+                            <div className="flex justify-center mb-2 sm:mb-4">
+                              <div className="h-8 w-8 sm:h-12 sm:w-12">
+                                {getSmallWeatherIcon(hourly.icon)}
+                              </div>
+                            </div>
+
+                            <div className="space-y-1 sm:space-y-3">
+                              <div className="text-lg sm:text-2xl font-bold text-white">{hourly.temp}°</div>
+                              <div className="text-xs sm:text-sm text-gray-300">{hourly.description}</div>
+                              
+                              <div className="space-y-1 sm:space-y-2">
+                                <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm">
+                                  <Droplets className="h-3 w-3 sm:h-4 sm:w-4 text-blue-400" />
+                                  <span>{hourly.humidity}%</span>
+                                </div>
+                                <div className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm">
+                                  <Wind className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
+                                  <span>{hourly.windSpeed}m/s</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </>
+            ))}
+          </div>
         </div>
+
+        {/* PC版のみ：選択された日の詳細表示（元の位置） */}
+        {selectedDay !== null && (
+          <Card className="bg-gradient-to-br from-black/70 via-gray-900/50 to-black/70 backdrop-blur-xl border border-orange-400/40 text-white mb-8 hidden lg:block">
+            <CardContent className="p-8">
+              <div className="flex items-center space-x-4 mb-6">
+                <Calendar className="h-8 w-8 text-orange-400" />
+                <h2 className="text-3xl font-bold text-white">
+                  {forecastData[selectedDay].date} ({forecastData[selectedDay].dayOfWeek}) の詳細予報
+                </h2>
+              </div>
+
+              {/* 3時間ごとの予報 */}
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {forecastData[selectedDay].hourlyForecasts.map((hourly, hourIndex) => (
+                  <div 
+                    key={hourIndex}
+                    className="bg-black/40 backdrop-blur-lg rounded-xl p-6 text-center border border-gray-600/30 min-h-[200px]"
+                  >
+                    <div className="text-lg font-bold text-orange-300 mb-4">{hourly.time}</div>
+                    
+                    <div className="flex justify-center mb-4">
+                      <div className="h-12 w-12">
+                        {getSmallWeatherIcon(hourly.icon)}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="text-2xl font-bold text-white">{hourly.temp}°</div>
+                      <div className="text-sm text-gray-300">{hourly.description}</div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-center space-x-2 text-sm">
+                          <Droplets className="h-4 w-4 text-blue-400" />
+                          <span>{hourly.humidity}%</span>
+                        </div>
+                        <div className="flex items-center justify-center space-x-2 text-sm">
+                          <Wind className="h-4 w-4 text-gray-400" />
+                          <span>{hourly.windSpeed}m/s</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <footer className="text-center text-gray-400">
           <div className="bg-black/30 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/30">
