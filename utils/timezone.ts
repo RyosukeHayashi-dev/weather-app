@@ -193,6 +193,60 @@ export function isDaytime(cityName: string): boolean {
   }
 }
 
+// 時間帯判定（朝・昼・夜・深夜の4つ）
+export type TimeOfDay = 'morning' | 'day' | 'evening' | 'night'
+
+export function getTimeOfDay(cityName: string): TimeOfDay {
+  const normalizedName = normalizeCityName(cityName)
+  const cityInfo = normalizedName ? CITY_TIMEZONES[normalizedName] : null
+  
+  if (!cityInfo) {
+    return 'day'
+  }
+  
+  try {
+    // 現在のUTC時刻を取得
+    const now = new Date()
+    
+    // 都市の時刻を計算
+    const cityTimeMs = now.getTime() + (cityInfo.offset * 3600000)
+    const cityTime = new Date(cityTimeMs)
+    const hour = cityTime.getUTCHours()
+    
+    let timeOfDay: TimeOfDay
+    if (hour >= 5 && hour < 11) {
+      timeOfDay = 'morning' // 朝（5:00-10:59）
+    } else if (hour >= 11 && hour < 17) {
+      timeOfDay = 'day'     // 昼（11:00-16:59）
+    } else if (hour >= 17 && hour < 22) {
+      timeOfDay = 'evening' // 夜（17:00-21:59）
+    } else {
+      timeOfDay = 'night'   // 深夜（22:00-4:59）
+    }
+    
+    console.log(`🌅 ${cityName} → ${normalizedName}: hour=${hour}, timeOfDay=${timeOfDay}`)
+    
+    return timeOfDay
+  } catch (error) {
+    console.warn(`Failed to determine time of day for ${cityName}:`, error)
+    return 'day'
+  }
+}
+
+// 時間帯の表示名と絵文字を取得
+export function getTimeOfDayInfo(timeOfDay: TimeOfDay): { name: string; emoji: string; color: string } {
+  switch (timeOfDay) {
+    case 'morning':
+      return { name: '朝', emoji: '🌅', color: 'bg-orange-500/20 text-orange-200 border border-orange-500/30' }
+    case 'day':
+      return { name: '昼', emoji: '☀️', color: 'bg-yellow-500/20 text-yellow-200 border border-yellow-500/30' }
+    case 'evening':
+      return { name: '夜', emoji: '🌆', color: 'bg-purple-500/20 text-purple-200 border border-purple-500/30' }
+    case 'night':
+      return { name: '深夜', emoji: '🌙', color: 'bg-blue-500/20 text-blue-200 border border-blue-500/30' }
+  }
+}
+
 // 各都市の緯度経度情報（日の出・日の入り、UV計算用）
 export const CITY_COORDINATES = {
   Tokyo: { lat: 35.6762, lon: 139.6503 },
